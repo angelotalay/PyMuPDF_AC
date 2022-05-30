@@ -1,5 +1,6 @@
 import os
 import fitz
+from bs4 import BeautifulSoup
 from PyMuHTML import PyMuHTML
 
 INPUT_DIR = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestPDF/pmcPDF/'
@@ -31,10 +32,11 @@ class PDF_Convert:
         if self.file_pages is None:
             print("Convert a desired PDF document first using converted_pdf function")
         elif type(self.file_pages) == list:
-            first_page = self.file_pages[0]
+            first_page = self.file_pages[0].soup
 
             for file in self.file_pages[1:]:  # Add all the elements of each page to the body tag within the first page.
-                for element in file.body:
+                soup = file.soup
+                for element in soup.body:
                     first_page.body.append(element)
 
             self.can_write = True
@@ -44,5 +46,5 @@ class PDF_Convert:
         outfile_name = input("Write outfile name for HTML document: ")
         if self.can_write:
             final_path = os.path.join(self.output, outfile_name)
-            with open(f"{final_path}.html") as out:
+            with open(f"{final_path}.html", mode='w') as out:
                 out.write(str(final))
