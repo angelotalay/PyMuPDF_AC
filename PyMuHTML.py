@@ -4,47 +4,39 @@ import os
 TEST = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestOutput/PyMuPDF/pmcPDF/PMC5511775_full_PMC.html'
 
 
-class PyMuPHTML:
+class PyMuHTML:
     def __init__(self, file):
-        with open(file, mode='r') as f:
-            file = f.read()
-            f.seek(0)
-            self.file_lines = f.readlines()
+        # with open(file, mode='r') as f:
+        #     file = f.read()
+        #     f.seek(0)
+        #     self.file_lines = f.readlines()
         self.soup = BeautifulSoup(file, 'html5lib')
+        self.paragraphs = None
 
-    ''' Remove unnecessary tags/lines that contain images or Author manuscript text, to execute first'''
+    ''' Remove unnecessary tags/lines that contain images or Author manuscript text, to execute first '''
 
+    # TODO: CHANGE LOGIC TO INCORPORATE INITIALISED BEAUTIFULSOUP OBJECT RATHER THAN READING FROM FILE
     def remove_lines(self) -> None:
         # Find lines that contain Author Manuscript and image tags and other unnecessary information
-        copy = self.soup
-        count = 1
 
         # Have to re-run code below through while loop since, not all tags detected through first parse
-        while count > 0:
-            author_man = copy.find_all(name=["p", "span"], string="Author Manuscript")
-            count = len(author_man)
-            line_numbers = [int(n.sourceline) for n in author_man]
 
-            lines = self.file_lines
-            for number in line_numbers:
-                lines.pop(number - 1)
-            next_copy = ''.join(lines)
-            copy = BeautifulSoup(next_copy, 'html5lib')
+        for author_man in self.soup.find_all(name=["p", "span"], string="Author Manuscript"):
+            author_man.decompose()
 
-        images = copy.find_all(name='img')
+        images = self.soup.find_all(name='img')
+
         for n in range(len(images)):
-            copy.img.decompose()
+            self.soup.img['src'] = 'None'
 
         with open('TEST_OUT.html', mode='w') as out:  # For test purposes only
-            out.write(str(copy))
-
-        self.soup = copy
+            out.write(str(self.soup))
 
     # TODO: TEST FOR CASE WHERE THERE'S A B TAG FOUND WITHIN THE P-TAG - THESE REPRESENT SUBHEADINGS NOT PARAGRAPHS
     # TODO: STOP AUTHORS AND FOOTER TEXT FROM BEING EXTRACTED - WHAT OTHER TAGS AND ATTRIBUTES DO THEY HAVE?
     def find_paragraphs(self) -> tuple:
-        copy = self.soup
-        p_tags = copy.find_all(name="p")
+        soup = self.soup
+        p_tags = soup.find_all(name="p")
         paragraphs = []
 
         # Get the nested span tags
@@ -73,7 +65,7 @@ class PyMuPHTML:
     def connect_paragraphs(paras: list, source_lines: list) -> list:  # Method for getting all the paragraphs
         span_template = paras[0].replace_with('')
         connected_paragraphs = {'paragraph': []}
-        test_number = 0
+        test_number = 0  # Test purposes only - to determine the number of lines that are being added together
         all_paras = []
         for n in range(len(paras)):
             line = paras[n]
@@ -90,24 +82,41 @@ class PyMuPHTML:
                 else:
                     if source_lines[n - 1] != line_number - 1:
                         all_paras.append(line)
-                    test_number += len(connected_paragraphs['paragraph'])
+                    test_number += len(connected_paragraphs['paragraph'])  # Testing to see if all lines have been
+                    # connected
                     whole_para = [n for n in connected_paragraphs['paragraph']]
                     all_paras.append(whole_para)
                     connected_paragraphs['paragraph'].clear()
-        print(all_paras)
         return all_paras
 
+    @staticmethod
+    def text_insert(tag: object, string: str) -> object:
+        print(tag.text + string)
+
+    def decompose_lines(self, lines: list):
+        soup = self.soup
+
+        for line in lines[1:]:
+            to_delete = soup.find(line)
+            print(to_delete)
+
+        self.soup = soup
+
     def merge(self, connected_paras):  # Method to merge the paragraphs into one entity.
-        soup = self.s
+        soup = self.soup
+        paragraphs_to_merge = connected_paras
+        for paragraph in paragraphs_to_merge:
+            if type(paragraph) == list and len(paragraph) != 0:
+                first_line = paragraph[0]
+                concatenated_string = ''.join([n.text for n in paragraph[1:]])
+                self.text_insert(first_line, concatenated_string)
+                self.decompose_lines(paragraphs_to_merge)
+            elif type(paragraph) != list:
+                continue
 
-
-
-
-
-
-
-output = PyMuPHTML(TEST)
-output.remove_lines()
-paragraphs, line_numbers = output.find_paragraphs()
-all_paragraphs = output.connect_paragraphs(paragraphs, line_numbers)
-output.merge(all_paragraphs)
+if __name__ == '__main__':
+    output = PyMuHTML(TEST)
+    output.remove_lines()
+    paragraphs, line_numbers = output.find_paragraphs()
+    all_paragraphs = output.connect_paragraphs(paragraphs, line_numbers)
+# output.merge(all_paragraphs)
