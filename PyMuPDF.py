@@ -48,3 +48,4 @@ class PDF_Convert:
             final_path = os.path.join(self.output, outfile_name)
             with open(f"{final_path}.html", mode='w') as out:
                 out.write(str(final))
+

@@ -1,26 +1,15 @@
 from bs4 import BeautifulSoup
-import os
-
-TEST = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestOutput/PyMuPDF/pmcPDF/PMC5511775_full_PMC.html'
-
 
 class PyMuHTML:
     def __init__(self, file):
-        # with open(file, mode='r') as f:
-        #     file = f.read()
-        #     f.seek(0)
-        #     self.file_lines = f.readlines()
         self.soup = BeautifulSoup(file, 'html5lib')
         self.paragraphs = None
 
     ''' Remove unnecessary tags/lines that contain images or Author manuscript text, to execute first '''
 
-    # TODO: CHANGE LOGIC TO INCORPORATE INITIALISED BEAUTIFULSOUP OBJECT RATHER THAN READING FROM FILE
+    # TODO: CHANGE LOGIC TO INCORPORATE OTHER PDFs THAT ARE NOT PMC - EG. INCLUDE TEXT FILE FOR DIFFERENT PUBLISHERS
     def remove_lines(self) -> None:
         # Find lines that contain Author Manuscript and image tags and other unnecessary information
-
-        # Have to re-run code below through while loop since, not all tags detected through first parse
-
         for author_man in self.soup.find_all(name=["p", "span"], string="Author Manuscript"):
             author_man.decompose()
 
@@ -113,6 +102,7 @@ class PyMuHTML:
                 self.decompose_lines(paragraphs_to_merge)
             elif type(paragraph) != list:
                 continue
+
 
 if __name__ == '__main__':
     output = PyMuHTML(TEST)
