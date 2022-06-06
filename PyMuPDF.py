@@ -3,7 +3,7 @@ import fitz
 from bs4 import BeautifulSoup
 from PyMuHTML import PyMuHTML
 
-INPUT_DIR = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestPDF/pmcPDF/'
+INPUT_DIR = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestPDF/pmcPDF/PMC5612337_full_PMC.pdf'
 OUTPUT_DIR = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestOutput/PyMuPDF/pmcPDF_xhtml/'
 
 
@@ -17,16 +17,15 @@ class PDF_Convert:
 
     def convert_pdf(self):  # Method to convert the pdf pages - then store each page in file_pages.
         self.file_pages = []
-        for file in os.listdir(self.input):
-            full_path = os.path.join(self.input, file)
-            document = fitz.open(full_path)
+        full_path = INPUT_DIR
+        document = fitz.open(full_path)
 
-            for page in document:
-                text = page.get_text('html')
-                clean = PyMuHTML(text)
-                clean.remove_lines()
+        for page in document:
+            text = page.get_text('html')
+            clean = PyMuHTML(text)
+            clean.remove_lines()
 
-                self.file_pages.append(clean)
+            self.file_pages.append(clean)
 
     def merge_pages(self) -> object:
         if self.file_pages is None:
@@ -36,8 +35,8 @@ class PDF_Convert:
 
             for file in self.file_pages[1:]:  # Add all the elements of each page to the body tag within the first page.
                 soup = file.soup
-                for element in soup.body:
-                    first_page.body.append(element)
+                for element in list(soup.body.div)[1:]: #Not sure whether to add into just the first page of the div or keep separate divs per page
+                    first_page.body.div.append(element)
 
             self.can_write = True
             return first_page
