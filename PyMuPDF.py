@@ -1,6 +1,5 @@
 import os
 import fitz
-from bs4 import BeautifulSoup
 from PyMuHTML import PyMuHTML
 
 INPUT_DIR = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestPDF/pmcPDF/PMC5612337_full_PMC.pdf'
