@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 class PyMuHTML:
     def __init__(self, file):
         self.soup = BeautifulSoup(file, 'html5lib')
-        self.paragraphs = None
+        self.configuration = None
 
     ''' Remove unnecessary tags/lines that contain images or Author manuscript text, to execute first '''
 
@@ -22,10 +22,9 @@ class PyMuHTML:
 
         self.soup = soup
 
-    # TODO: TEST FOR CASE WHERE THERE'S A B TAG FOUND WITHIN THE P-TAG - THESE REPRESENT SUBHEADINGS NOT PARAGRAPHS
     # TODO: STOP AUTHORS AND FOOTER TEXT FROM BEING EXTRACTED - WHAT OTHER TAGS AND ATTRIBUTES DO THEY HAVE?
     # TODO: APPLY THIS FIND FUNCTION TO BE ABLE TO FIND OTHER TAGS SUCH AS THE TITLE T0 CONCATENATE THEM
-    def find_sections(self) -> tuple:
+    def find_sections(self, tag, attribute) -> tuple:
         soup = self.soup
         p_tags = soup.find_all(name="p")
         section = []
