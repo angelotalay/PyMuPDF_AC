@@ -24,7 +24,7 @@ class PyMuHTML:
 
     # TODO: STOP AUTHORS AND FOOTER TEXT FROM BEING EXTRACTED - WHAT OTHER TAGS AND ATTRIBUTES DO THEY HAVE?
     # TODO: APPLY THIS FIND FUNCTION TO BE ABLE TO FIND OTHER TAGS SUCH AS THE TITLE T0 CONCATENATE THEM
-    def find_sections(self, tag, attribute) -> tuple:
+    def find_sections(self, config_tag, config_attribute) -> tuple:
         soup = self.soup
         p_tags = soup.find_all(name="p")
         section = []
@@ -32,7 +32,7 @@ class PyMuHTML:
         # Get the nested span tags
         for tag in p_tags:
             try:
-                spans = tag.find(name="span", attrs={"style": "font-family:Times,serif;font-size:10pt"})
+                spans = tag.find(name=config_tag, attrs=config_attribute)
                 text = spans.getText()
 
                 # Add the spans that contain text and append to the section list. This will be used to obtain that

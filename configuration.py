@@ -1,7 +1,5 @@
 import json
 
-TEST_PATH = 'pmc_pdf_config.json'
-
 
 # TODO: SET CONFIGURATION FOR REMOVALS
 class Configuration:
@@ -20,7 +18,3 @@ class Configuration:
         self.header = json_object['heading']
         self.subheading = json_object['subheading']
         self.paragraph = json_object['paragraph']
-
-
-config_reader = Configuration(TEST_PATH)
-config_reader.read_configuration()
