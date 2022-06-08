@@ -35,7 +35,8 @@ class PDF_Convert:
 
             for file in self.file_pages[1:]:  # Add all the elements of each page to the body tag within the first page.
                 soup = file.soup
-                for element in list(soup.body.div)[1:]: #Not sure whether to add into just the first page of the div or keep separate divs per page
+                for element in list(soup.body.div)[1:]: # Not sure whether to add into just the first page of the div
+                    # or keep separate divs per page
                     first_page.body.div.append(element)
 
             self.can_write = True
