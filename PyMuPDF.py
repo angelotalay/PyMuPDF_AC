@@ -9,8 +9,6 @@ OUTPUT_DIR = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestOutp
 # TODO: Create class to convert pdfs and to merge pages together within single body tag.
 class PDF_Convert:
     def __init__(self):
-        self.input = INPUT_DIR
-        self.output = OUTPUT_DIR
         self.file_pages = None
         self.can_write = False
 
@@ -34,17 +32,20 @@ class PDF_Convert:
 
             for file in self.file_pages[1:]:  # Add all the elements of each page to the body tag within the first page.
                 soup = file.soup
-                for element in list(soup.body.div)[1:]: # Not sure whether to add into just the first page of the div
+                for element in list(soup.body.div)[1:]:  # Not sure whether to add into just the first page of the div
                     # or keep separate divs per page
                     first_page.body.div.append(element)
 
             self.can_write = True
             return first_page
 
-    def write_page(self, final) -> None:
-        outfile_name = input("Write outfile name for HTML document: ")
+    def write_page(self, final, outfile_name) -> None:
         if self.can_write:
-            final_path = os.path.join(self.output, outfile_name)
-            with open(f"{final_path}.html", mode='w') as out:
-                out.write(str(final))
-
+            if outfile_name[-5:] != '.html':
+                with open(f"{outfile_name}.html", mode='w') as out:
+                    out.write(str(final))
+            else:
+                with open(outfile_name, mode="w") as out:
+                    out.write(str(final))
+        else:
+            print("No HTML file to write. ")

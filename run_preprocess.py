@@ -2,6 +2,7 @@ import PyMuHTML
 import PyMuPDF
 import configuration
 import argparse
+import itertools
 
 
 # TODO: Remember to allow user to set input and output directories and select PDF files
@@ -34,11 +35,23 @@ def run_conversion(converter_object: object) -> object:
     return str(merged_pages)
 
 
+def check_json_information(function):
+    def wrapper(*args):
+        if args[1][1] is not None:
+            function(args[0], args[1])
+        else:
+            print(f"{args[1]} has not been set in the configuration file.")
+
+    return wrapper
+
+
+@check_json_information
 def concatenate_sections(pre_processing_object: object, json_information: dict):
     """ Function that finds sections and merges them together """
-    json_list = list(json_information.items)
-    json_tag = json_list[0]
-    json_attribute = json_list[1]
+    json_list = list(json_information)
+    json_tag = list(json_list[1].keys())[0]
+    json_attribute = list(json_list[1].values())[0]
+
     pre_processing_object.reformat_file()
     section, source_lines = pre_processing_object.find_sections(config_tag=json_tag, config_attribute=json_attribute)
     connected_section = pre_processing_object.connect_section(section, source_lines)
@@ -48,17 +61,20 @@ def concatenate_sections(pre_processing_object: object, json_information: dict):
 
 
 if __name__ == '__main__':
-
     # Parse arguments and input config file path into configuration class, return dictionary of tags and attributes
     arguments = read_args()
-    configuration_dictionary = sort_configuration(arguments[-1])
+    configuration_dictionary = sort_configuration(arguments[2])
+    outfile = arguments[1]
 
     converter = PyMuPDF.PDF_Convert()
     merged = run_conversion(converter)
     pre_processing = PyMuHTML.PyMuHTML(merged)
 
-    # pre_processing = concatenate_sections(pre_processing)
-    # for n in range(0, 1):
-    #     pre_processing.unwrap_tags()
+    sections = itertools.islice(configuration_dictionary.items(), 4)
+    for item in sections:
+        concatenate_sections(pre_processing, item)
 
-    # converter.write_page(pre_processing.soup)
+    for n in range(0, 1):
+        pre_processing.unwrap_tags()
+
+    converter.write_page(pre_processing.soup, arguments[1])
