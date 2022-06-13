@@ -31,17 +31,29 @@ class PyMuHTML:
 
         # Get the nested span tags
         for tag in p_tags:
-            try:
-                spans = tag.find(name=config_tag, attrs=config_attribute)
-                text = spans.getText()
 
-                # Add the spans that contain text and append to the section list. This will be used to obtain that
-                # sourceline numbers
-                if text is not None:
-                    section.append(spans)
+            if config_tag == 'b' or config_tag == 'i':
+                try:
+                    span = tag.find(attrs=config_attribute)
+                    text = span.getText()
 
-            except AttributeError:  # Capture the case where tag.find() function is None.
-                continue
+                    if text is not None:
+                        section.append(span)
+                except AttributeError:  # Capture the case where tag.find() is None
+                    continue
+
+            else:
+                try:  # TODO: FIX LOGIC TO FIND CORRECT ATTRIBUTES USING NEW CONFIG FILE
+                    span = tag.find(name=config_tag, attrs=config_attribute)
+                    text = span.getText()
+
+                    # Add the spans that contain text and append to the section list. This will be used to obtain that
+                    # sourceline numbers
+                    if text is not None:
+                        section.append(span)
+
+                except AttributeError:  # Capture the case where tag.find() function is None.
+                    continue
 
         source_lines = [n.sourceline for n in section]
         return section, source_lines
@@ -54,23 +66,37 @@ class PyMuHTML:
         for n in range(len(paras)):
             line = paras[n]
             line_number = source_lines[n]
-            if line_number != source_lines[-1]:
+            if line_number != source_lines[-1]:  # For all lines from the first paragraph until the second to last
                 next_line = paras[n + 1]
                 next_line_number = source_lines[n + 1]
-                if line_number - next_line_number == -1:
+
+                if line_number - next_line_number == -1:  # Append the next paragraph if they're on the next line
                     if line not in connected_sections['section']:
                         connected_sections['section'].append(line)
-                    else:
-                        connected_sections['section'].append(next_line)
-
-                else:
-                    if source_lines[n - 1] != line_number - 1:
-                        all_paras.append(line)
-                    test_number += len(connected_sections['section'])  # Testing to see if all lines have been
-                    # connected
+                    # else:
+                    #     connected_sections['section'].append(next_line)
+                elif line_number - next_line_number < -1:  # If the next line number is more than one line away from
+                    # the current line number
+                    if line_number != source_lines[0]:
+                        previous_line_number = source_lines[n - 1]
+                        if previous_line_number == source_lines[n - 1]:
+                            connected_sections['section'].append(line)
+                            whole_para = [n for n in connected_sections['section']]
+                            all_paras.append(whole_para)
+                            connected_sections['section'].clear()
+            elif line_number == source_lines[-1]:
+                previous_line_number = source_lines[n - 1]
+                if previous_line_number == source_lines[n - 1]:
+                    connected_sections['section'].append(line)
                     whole_para = [n for n in connected_sections['section']]
                     all_paras.append(whole_para)
                     connected_sections['section'].clear()
+
+            # else:
+            #     all_paras.append(line)
+            #     whole_para = [n for n in connected_sections['section']]
+            #     all_paras.append(whole_para)
+            #     connected_sections['section'].clear()
         return all_paras
 
     def insert_text(self, tag: object, string: str) -> None:
@@ -94,9 +120,12 @@ class PyMuHTML:
 
         else:
             for line in lines[1:]:
-                to_delete = soup.find('span', string=line.text)
-                parent = to_delete.find_parent()  # Find the outer tag of the span and remove
-                parent.decompose()
+                try:
+                    to_delete = soup.find('span', string=line.text)
+                    parent = to_delete.find_parent()  # Find the outer tag of the span and remove
+                    parent.decompose()
+                except AttributeError:  # Case where find_parent is None
+                    continue
 
         self.soup = soup
 
@@ -104,10 +133,17 @@ class PyMuHTML:
         """ Removal of newline characters after decomposition of tags. Useful to use before merging sections together
         as source line numbers should be reset as the output is re-parsed into BeautifulSoup """
         soup = self.soup
+
+        for tag in soup.find_all(name='p'):  # Iterate over lines to remove empty tags
+            if len(tag.get_text()) == 0:
+                tag.decompose()
+        self.soup = soup
+
+        soup = self.soup
         string = str(soup)
         list_html = string.split('\n')
         out_html_list = []
-        for n in list_html:
+        for n in list_html:  # Iterate over lines to remove blank lines
             if n == '':
                 list_html.remove(n)
             else:
