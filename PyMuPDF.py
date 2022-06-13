@@ -48,4 +48,4 @@ class PDF_Convert:
                 with open(outfile_name, mode="w") as out:
                     out.write(str(final))
         else:
-            print("No HTML file to write. ")
+            print("No HTML file to write.")
