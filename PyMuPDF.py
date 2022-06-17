@@ -1,21 +1,17 @@
-import os
 import fitz
 from PyMuHTML import PyMuHTML
 
-INPUT_DIR = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestPDF/pmcPDF/PMC5612337_full_PMC.pdf'
-OUTPUT_DIR = '/home/aagt1/Documents/IndependentResearchProject/TestData/TestOutput/PyMuPDF/pmcPDF_xhtml/'
 
-
-# TODO: Create class to convert pdfs and to merge pages together within single body tag.
+# TODO: Make the write page method to be able to write at any stage.
 class PDF_Convert:
-    def __init__(self):
+    def __init__(self, file_path):
         self.file_pages = None
         self.can_write = False
+        self.file_path = file_path
 
     def convert_pdf(self):  # Method to convert the pdf pages - then store each page in file_pages.
         self.file_pages = []
-        full_path = INPUT_DIR
-        document = fitz.open(full_path)
+        document = fitz.open(self.file_path)
 
         for page in document:
             text = page.get_text('html')
@@ -39,13 +35,21 @@ class PDF_Convert:
             self.can_write = True
             return first_page
 
-    def write_page(self, final, outfile_name) -> None:
-        if self.can_write:
+    # TODO: Change to write to correct directory when program is processing a whole directory of HTMLs
+    # TODO: FILES ARE NOT BEING WRITTEN TO THE DIRECTORY WHAT IS GOING ON
+    @staticmethod
+    def write_page(final: object, outfile_name: str, is_dir: bool) -> None:
+        if not is_dir:
             if outfile_name[-5:] != '.html':
                 with open(f"{outfile_name}.html", mode='w') as out:
                     out.write(str(final))
             else:
                 with open(outfile_name, mode="w") as out:
                     out.write(str(final))
-        else:
-            print("No HTML file to write.")
+        elif is_dir:
+            if outfile_name[-4:] == '.pdf':
+                with open(f"{outfile_name[:-4]}.html", mode="w+") as out:
+                    out.write(str(final))
+            else:
+                with open(f"{outfile_name}.html", mode="w+") as out:
+                    out.write(str(final))
