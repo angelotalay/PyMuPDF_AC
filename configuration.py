@@ -5,9 +5,9 @@ import json
 class Configuration:
     def __init__(self, config_path):
         self.title = None
-        self.header = None
-        self.subheading = None
-        self.paragraph = None
+        self.headers = None
+        self.subheadings = None
+        self.paragraphs = None
         self.removals = None
         self.config_path = config_path
 
@@ -15,6 +15,7 @@ class Configuration:
         with open(self.config_path, 'r') as file:
             json_object = json.load(file)
         self.title = json_object['title']
-        self.header = json_object['heading']
-        self.subheading = json_object['subheading']
-        self.paragraph = json_object['paragraph']
+        self.headers = json_object['heading']
+        self.subheadings = json_object['subheading']
+        self.paragraphs = json_object['paragraph']
+

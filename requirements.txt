@@ -1,0 +1,3 @@
+fitz~=0.0.1.dev2
+beautifulsoup4~=4.11.1
+pymupdf~=1.19.6
