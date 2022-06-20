@@ -79,7 +79,7 @@ def run_dir(directory_path: str, out_path: str, configuration_obj: object):
         out, converter = run_file(full_path, configuration_obj)
         out.remove_repetitive()
         out.reformat_file()
-        converter.write_page(final=out.soup, outfile_name=out_path, is_dir=True, prefix=file)
+        converter.write_page(final=out.soup, outfile_name=out_path, is_dir=True)
 
 
 if __name__ == '__main__':
