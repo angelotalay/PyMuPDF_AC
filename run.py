@@ -1,5 +1,5 @@
-import PyMuHTML
-import PyMuPDF
+import PDF_Conversion
+import FormatHTML
 import handle_path
 import configuration
 import argparse
@@ -62,9 +62,9 @@ def concatenate_all(pre_processing_object: object, config_class: object) -> obje
 # TODO: Remove repeat code and refactor
 def run_file(file_path: str, configuration_obj: object):
     """Run program with single file"""
-    converter = PyMuPDF.PDF_Convert(file_path)
+    converter = PDF_Conversion.PDF_Convert(file_path)
     merged = run_conversion(converter)
-    pre_processing = PyMuHTML.PyMuHTML(merged)
+    pre_processing = FormatHTML.PyMuHTML(merged)
     pre_processed = concatenate_all(pre_processing, configuration_obj)
     pre_processed.unwrap_tags()
     return pre_processed, converter

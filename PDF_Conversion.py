@@ -1,5 +1,5 @@
 import fitz
-from PyMuHTML import PyMuHTML
+from FormatHTML import PyMuHTML
 
 
 # TODO: Make the write page method to be able to write at any stage.
@@ -35,8 +35,6 @@ class PDF_Convert:
             self.can_write = True
             return first_page
 
-    # TODO: Change to write to correct directory when program is processing a whole directory of HTMLs
-    # TODO: FILES ARE NOT BEING WRITTEN TO THE DIRECTORY WHAT IS GOING ON
     @staticmethod
     def write_page(final: object, outfile_name: str, is_dir: bool) -> None:
         if not is_dir:
