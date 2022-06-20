@@ -6,9 +6,10 @@ class PyMuHTML:
         self.soup = BeautifulSoup(file, 'html5lib')
         self.configuration = None
 
-    ''' Remove unnecessary tags/lines that contain images or Author manuscript text, to execute first '''
-
+    # TODO: CHANGE LOGIC TO USE CONFIG RATHER THAN HARD CODING SPECIFIC TAGS
     def remove_lines(self) -> None:
+        """ Remove specific lines specified by inspector of PDF files. Also removes lines related to images since
+        they can span over many lines within the HTML file. """
         soup = self.soup
         # Find lines that contain Author Manuscript and image tags and other unnecessary information
         for author_man in soup.find_all(name=["p", "span"], string="Author Manuscript"):
@@ -19,6 +20,24 @@ class PyMuHTML:
         for n in range(len(images)):
             soup.img.decompose()
 
+        self.soup = soup
+
+    def remove_repetitive(self) -> None:
+        """ Method to remove repetitive lines within soup object, similar to remove lines but less specific"""
+        soup = self.soup
+        text_count = {}
+        for line in soup.find_all(name=["p", "span"]):
+            if line not in text_count.keys():
+                text_count[line] = 1
+            else:
+                text_count[line] += 1
+        more_than_10 = {k: v for (k, v) in text_count.items() if v > 10}
+        for key in more_than_10.keys():
+            tag_name = key.name
+            tag_text = key.getText()
+            found = soup.find_all(name=tag_name, string=tag_text)
+            for line in found:
+                line.decompose()
         self.soup = soup
 
     # TODO: STOP AUTHORS AND FOOTER TEXT FROM BEING EXTRACTED - WHAT OTHER TAGS AND ATTRIBUTES DO THEY HAVE?
