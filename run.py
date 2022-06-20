@@ -92,6 +92,7 @@ if __name__ == '__main__':
     if paths.dir_path is not None:
         paths.check_dir()
         run_dir(directory_path=paths.dir_path, out_path=paths.out_path, configuration_obj=configuration_class)
+        print("Successfully completed")
 
     elif paths.file_path is not None:
         paths.check_file_path()
@@ -99,3 +100,4 @@ if __name__ == '__main__':
         out_file.remove_repetitive()
         out_file.reformat_file()
         converter.write_page(final=out_file.soup, outfile_name=paths.out_path, is_dir=False)
+        print("Successfully completed")
