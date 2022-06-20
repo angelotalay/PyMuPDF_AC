@@ -77,6 +77,8 @@ def run_dir(directory_path: str, out_path: str, configuration_obj: object):
         full_path = os.path.join(directory_path, file)
         out_path = os.path.join(output_path, file)
         out, converter = run_file(full_path, configuration_obj)
+        out.remove_repetitive()
+        out.reformat_file()
         converter.write_page(final=out.soup, outfile_name=out_path, is_dir=True, prefix=file)
 
 
@@ -94,4 +96,6 @@ if __name__ == '__main__':
     elif paths.file_path is not None:
         paths.check_file_path()
         out_file, converter = run_file(file_path=paths.file_path, configuration_obj=configuration_class)
-        converter.write_page(out_file.soup)
+        out_file.remove_repetitive()
+        out_file.reformat_file()
+        converter.write_page(final=out_file.soup, outfile_name=paths.out_path, is_dir=False)
