@@ -13,9 +13,14 @@ class Configuration:
 
     def read_configuration(self):
         with open(self.config_path, 'r') as file:
-            json_object = json.load(file)
-        self.title = json_object['title']
-        self.headers = json_object['heading']
-        self.subheadings = json_object['subheading']
-        self.paragraphs = json_object['paragraph']
+            contents = file.readlines()
+        config_dict = {}
+        for line in contents:
+            split = line.split(',')
+            config_dict[split[0]] = {split[1]:split[2]}
+        print(config_dict)
+        self.title = config_dict['title']
+        self.headers = config_dict['heading']
+        self.subheadings = config_dict['subheading']
+        self.paragraphs = config_dict['paragraph']
 
