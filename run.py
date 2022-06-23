@@ -38,8 +38,8 @@ def run_conversion(converter_object: object) -> object:
 
 def concatenate_sections(pre_processing_object: object, json_information: dict) -> object:
     """ Function that finds sections and merges them together """
-    json_tag = json_information[0]
-    json_attribute = json_information[1]
+    json_tag = list(json_information.keys())[0]
+    json_attribute = list(json_information.values())[0].strip('\n')
 
     pre_processing_object.reformat_file()
     section, source_lines = pre_processing_object.find_sections(config_tag=json_tag, config_attribute=json_attribute)
@@ -89,15 +89,15 @@ if __name__ == '__main__':
     configuration_class = configuration.Configuration(arguments[2])
     configuration_class.read_configuration()
 
-    # if paths.dir_path is not None:
-    #     paths.check_dir()
-    #     run_dir(directory_path=paths.dir_path, out_path=paths.out_path, configuration_obj=configuration_class)
-    #     print("Successfully completed")
-    #
-    # elif paths.file_path is not None:
-    #     paths.check_file_path()
-    #     out_file, converter = run_file(file_path=paths.file_path, configuration_obj=configuration_class)
-    #     out_file.remove_repetitive()
-    #     out_file.reformat_file()
-    #     converter.write_page(final=out_file.soup, outfile_name=paths.out_path, is_dir=False)
-    #     print("Successfully completed")
+    if paths.dir_path is not None:
+        paths.check_dir()
+        run_dir(directory_path=paths.dir_path, out_path=paths.out_path, configuration_obj=configuration_class)
+        print("Successfully completed")
+
+    elif paths.file_path is not None:
+        paths.check_file_path()
+        out_file, converter = run_file(file_path=paths.file_path, configuration_obj=configuration_class)
+        out_file.remove_repetitive()
+        out_file.reformat_file()
+        converter.write_page(final=out_file.soup, outfile_name=paths.out_path, is_dir=False)
+        print("Successfully completed")

@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import re
 
 
 class PyMuHTML:
@@ -51,7 +52,7 @@ class PyMuHTML:
 
             if config_tag == 'b' or config_tag == 'i':
                 try:
-                    span = tag.find(attrs=config_attribute)
+                    span = tag.find(name='span',attrs={"style":re.compile(config_attribute)})
                     text = span.getText()
 
                     if text is not None:
@@ -61,7 +62,7 @@ class PyMuHTML:
 
             else:
                 try:
-                    span = tag.find(name=config_tag, attrs=config_attribute)
+                    span = tag.find(name=config_tag, attrs={"style":re.compile(config_attribute)})
                     text = span.getText()
 
                     # Add the spans that contain text and append to the section list. This will be used to obtain that
@@ -109,11 +110,11 @@ class PyMuHTML:
                     all_paras.append(whole_para)
                     connected_sections['section'].clear()
 
-            # else:
-            #     all_paras.append(line)
-            #     whole_para = [n for n in connected_sections['section']]
-            #     all_paras.append(whole_para)
-            #     connected_sections['section'].clear()
+            else:
+                all_paras.append(line)
+                whole_para = [n for n in connected_sections['section']]
+                all_paras.append(whole_para)
+                connected_sections['section'].clear()
         return all_paras
 
     def insert_text(self, tag: object, string: str) -> None:

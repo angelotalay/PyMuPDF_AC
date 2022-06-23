@@ -18,9 +18,8 @@ class Configuration:
         for line in contents:
             split = line.split(',')
             config_dict[split[0]] = {split[1]:split[2]}
-        print(config_dict)
         self.title = config_dict['title']
-        self.headers = config_dict['heading']
-        self.subheadings = config_dict['subheading']
-        self.paragraphs = config_dict['paragraph']
+        self.headers = config_dict['headings']
+        self.subheadings = config_dict['subheadings']
+        self.paragraphs = config_dict['paragraphs']
 
