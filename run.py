@@ -38,8 +38,8 @@ def run_conversion(converter_object: object) -> object:
 
 def concatenate_sections(pre_processing_object: object, json_information: dict) -> object:
     """ Function that finds sections and merges them together """
-    json_tag = json_information[0]
-    json_attribute = json_information[1]
+    json_tag = list(json_information.keys())[0]
+    json_attribute = list(json_information.values())[0].strip('\n')
 
     pre_processing_object.reformat_file()
     section, source_lines = pre_processing_object.find_sections(config_tag=json_tag, config_attribute=json_attribute)
