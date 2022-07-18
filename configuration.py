@@ -16,7 +16,8 @@ class Configuration:
             contents = file.readlines()
         config_dict = {}
         for line in contents:
-            split = line.split(',')
+            strip = line.strip('\n')
+            split = strip.split(',')
             config_dict[split[0]] = {split[1]:split[2]}
         self.title = config_dict['title']
         self.headers = config_dict['headings']
