@@ -34,11 +34,14 @@ class PyMuHTML:
                 text_count[line] += 1
         more_than_10 = {k: v for (k, v) in text_count.items() if v > 10}
         for key in more_than_10.keys():
-            tag_name = key.name
-            tag_text = key.getText()
-            found = soup.find_all(name=tag_name, string=tag_text)
-            for line in found:
-                line.decompose()
+            if key.name is None: #Prevents deletion of soup object
+                pass
+            else:
+                tag_name = key.name
+                tag_text = key.getText()
+                found = soup.find_all(name=tag_name, string=tag_text)
+                for line in found:
+                    line.decompose()
         self.soup = soup
 
     # TODO: STOP AUTHORS AND FOOTER TEXT FROM BEING EXTRACTED - WHAT OTHER TAGS AND ATTRIBUTES DO THEY HAVE?
