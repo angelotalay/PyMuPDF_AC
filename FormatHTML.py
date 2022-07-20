@@ -49,7 +49,7 @@ class PyMuHTML:
         soup = self.soup
         p_tags = soup.find_all(name="p")
         section = []
-
+        config_attribute = '^'+config_attribute+'$'
         # Get the nested span tags
         for tag in p_tags:
 
@@ -155,7 +155,7 @@ class PyMuHTML:
         as source line numbers should be reset as the output is re-parsed into BeautifulSoup """
         soup = self.soup
 
-        for tag in soup.find_all(name='p'):  # Iterate over lines to remove empty tags
+        for tag in soup.find_all(name='p'):  # Iterate over lines to remove empty tagsrem
             if len(tag.get_text()) == 0:
                 tag.decompose()
         self.soup = soup
