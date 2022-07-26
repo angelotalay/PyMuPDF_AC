@@ -49,7 +49,6 @@ class PyMuHTML:
         soup = self.soup
         p_tags = soup.find_all(name="p")
         section = []
-        config_attribute = '^'+config_attribute+'$'
         # Get the nested span tags
         for tag in p_tags:
 
